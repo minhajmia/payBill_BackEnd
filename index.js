@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -35,6 +35,21 @@ async function run() {
       const query = {};
       const bills = await billCollection.find(query).toArray();
       res.send(bills);
+    });
+
+    // Delete Bill
+    // app.delete("/api/delete-billing/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   console.log(id);
+    //   const query = { _id: ObjectId(id) };
+    //   const result = await billCollection.deleteOne(query);
+    //   res.send(result);
+    // });
+    app.delete("/api/deleteBilling/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await billCollection.deleteOne(query);
+      res.send(result);
     });
   } finally {
   }
