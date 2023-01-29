@@ -22,6 +22,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const billCollection = client.db("payBillDB").collection("bills");
+    const userCollection = client.db("payBillDB").collection("users");
 
     // Bill Paying Api
     app.post("/api/add-billing", async (req, res) => {
@@ -37,18 +38,24 @@ async function run() {
       res.send(bills);
     });
 
-    // Delete Bill
-    // app.delete("/api/delete-billing/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   console.log(id);
-    //   const query = { _id: ObjectId(id) };
-    //   const result = await billCollection.deleteOne(query);
-    //   res.send(result);
-    // });
-    app.delete("/api/deleteBilling/:id", async (req, res) => {
+    // Delete Bill Api
+    app.delete("/api/delete-billing/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await billCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Update Bill Api
+    app.put("/api/update-billing/:id", async(req, res) => {
+      const id = req.params.id;
+      const query =
+    });
+
+    // Registration  Api
+    app.post("/api/registration", async (req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
       res.send(result);
     });
   } finally {
