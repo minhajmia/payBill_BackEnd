@@ -23,11 +23,18 @@ async function run() {
   try {
     const billCollection = client.db("payBillDB").collection("bills");
 
+    // Bill Paying Api
     app.post("/api/add-billing", async (req, res) => {
       const userBill = req.body;
-      console.log(userBill);
-      // const bill = await billCollection.insertOne(userBill);
-      // res.send(bill);
+      const bill = await billCollection.insertOne(userBill);
+      res.send(bill);
+    });
+
+    // Billing list Api
+    app.get("/api/billing-list", async (req, res) => {
+      const query = {};
+      const bills = await billCollection.find(query).toArray();
+      res.send(bills);
     });
   } finally {
   }
