@@ -33,9 +33,13 @@ async function run() {
 
     // Billing list Api
     app.get("/api/billing-list", async (req, res) => {
+      const page = req.query.page;
+      const size = req.query.size;
+      console.log(page, size);
       const query = {};
       const bills = await billCollection.find(query).toArray();
-      res.send(bills);
+      const count = await billCollection.estimatedDocumentCount();
+      res.send({ bills, count });
     });
 
     // Delete Bill Api
@@ -47,9 +51,24 @@ async function run() {
     });
 
     // Update Bill Api
-    app.put("/api/update-billing/:id", async(req, res) => {
+    app.put("/api/update-billing/:id", async (req, res) => {
       const id = req.params.id;
-      const query =
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const billingInfo = req.body;
+      const updateBillingInfo = {
+        $set: {
+          fullName: billingInfo.fullName,
+          email: billingInfo.email,
+          phone: billingInfo.phone,
+          amount: billingInfo.amount,
+        },
+      };
+      const result = await billCollection.updateOne(
+        filter,
+        updateBillingInfo,
+        options
+      );
     });
 
     // Registration  Api
@@ -57,6 +76,16 @@ async function run() {
       const user = req.body;
       const result = await userCollection.insertOne(user);
       res.send(result);
+    });
+
+    // Login Api
+    app.get("/api/login", async (req, res) => {
+      const email = req.query.email;
+      if (email) {
+        const query = { email };
+        const result = await userCollection.findOne(query);
+        res.send(result);
+      }
     });
   } finally {
   }
